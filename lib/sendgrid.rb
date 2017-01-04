@@ -99,6 +99,11 @@ module SendGrid
     end
   end
 
+  # Call within mailer method to set the Suppression Groups.
+  def sendgrid_group_id(group_id)
+    @sg_group_id = group_id
+  end
+
   # Call within mailer method to set the template_id.
   def sendgrid_template_id(template_id)
     @sg_template_id = template_id
@@ -245,6 +250,11 @@ module SendGrid
       header_opts[:sub] = @sg_substitutions
     end
 
+    # Set Suppression Groups
+    if @sg_group_id
+      header_opts[:asm_group_id] = @sg_group_id
+    end
+
     # Set enables/disables
     enabled_opts = []
     if @sg_options && !@sg_options.empty?
@@ -304,7 +314,7 @@ module SendGrid
             @ganalytics_options.each do |key, value|
               filters[:ganalytics]['settings'][key.to_s] = value
             end
-          end
+          end          
 
         when :templates
           if @sg_template_id
